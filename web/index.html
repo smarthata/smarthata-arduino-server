@@ -2,6 +2,7 @@
 <html lang="en" ng-app="SmartHataApp">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=400, user-scalable=yes">
     <title>SmartHata</title>
     <style>
         body {
@@ -9,7 +10,7 @@
             color: white;
             font-family: sans-serif;
             margin: 50px auto;
-            padding: 30px;
+            padding: 20px;
             width: 333px;
             border: 1px solid #333333;
         }
@@ -37,7 +38,7 @@
                 this.data = {
                     date: "20 Апреля",
                     time: "20:12",
-                    temperature: "23"
+                    temperature: "0"
                 };
             });
     </script>
@@ -47,9 +48,9 @@
     <div style="display:inline-block;float:left;font-size:30px;">
         {{dateTime.data.temperature}} ℃
     </div>
-    <div style="display:inline;float:right;text-align:right;font-size:20px;">
-        {{dateTime.data.time}}<br/>
-        {{dateTime.data.date}}
+    <div style="display:inline;float:right;text-align:right;">
+        <span style="font-size:20px;">{{dateTime.data.time}}</span><br/>
+        <span style="font-size:15px;">{{dateTime.data.date}}</span>
     </div>
     <div style="clear: both"></div>
 </div>
