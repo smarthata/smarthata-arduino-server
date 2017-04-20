@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" ng-app="SmartHataApp">
 <head>
     <meta charset="UTF-8">
     <title>SmartHata</title>
@@ -14,7 +14,7 @@
             border: 1px solid #333333;
         }
 
-        div.block {
+        .tile {
             display: inline-block;
             min-width: 100px;
             min-height: 100px;
@@ -30,17 +30,33 @@
             color: white;
         }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script>
+        angular.module('SmartHataApp', [])
+            .controller('DateTimeController', function () {
+                this.data = {
+                    date: "20 Апреля",
+                    time: "20:12",
+                    temperature: "23"
+                };
+            });
+    </script>
 </head>
 <body>
-<div style="height:50px;">Дата/время/температура</div>
-<a href="#lighting">
-    <div class="block">Освещение</div>
-</a>
-<a href="#warming">
-    <div class="block">Отопление</div>
-</a>
-<a href="#watering">
-    <div class="block">Полив</div>
-</a>
+<div ng-controller="DateTimeController as dateTime" style="margin:10px 3px;">
+    <div style="display:inline-block;float:left;font-size:30px;">
+        {{dateTime.data.temperature}} ℃
+    </div>
+    <div style="display:inline;float:right;text-align:right;font-size:20px;">
+        {{dateTime.data.time}}<br/>
+        {{dateTime.data.date}}
+    </div>
+    <div style="clear: both"></div>
+</div>
+<div>
+    <a href="#lighting" class="tile">Освещение</a>
+    <a href="#warming" class="tile">Отопление</a>
+    <a href="#watering" class="tile">Полив</a>
+</div>
 </body>
 </html>
