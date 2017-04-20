@@ -1,0 +1,15 @@
+<div ng-controller="DateTimeController as dateTime" style="margin:10px 3px;">
+    <div style="display:inline-block;float:left;font-size:30px;">
+        {{dateTime.data.temperature}} ℃
+    </div>
+    <div style="display:inline;float:right;text-align:right;">
+        <span style="font-size:20px;">{{dateTime.data.time}}</span><br/>
+        <span style="font-size:15px;">{{dateTime.data.date}}</span>
+    </div>
+    <div style="clear: both"></div>
+</div>
+<div>
+    <a href="#/lighting" class="tile">Освещение</a>
+    <a href="#/warming" class="tile">Отопление</a>
+    <a href="#/watering" class="tile">Полив</a>
+</div>

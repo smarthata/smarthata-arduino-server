@@ -1,0 +1,38 @@
+body {
+    background-color: black;
+    color: white;
+    font-family: sans-serif;
+    margin: 50px auto;
+    padding: 20px;
+    width: 335px;
+    border: 1px solid #333333;
+}
+
+.tile {
+    display: inline-block;
+    min-width: 100px;
+    min-height: 100px;
+    line-height: 100px;
+    text-align: center;
+    margin: 3px;
+    background-color: #111111;
+    border: 1px solid #333333;
+    border-radius: 4px;
+}
+
+.button {
+    display: inline-block;
+    padding: 4px 12px;
+    background-color: #111111;
+    border: 1px solid #333333;
+    border-radius: 2px;
+}
+
+fieldset {
+    border: 1px solid #333333;
+    margin-bottom: 10px;
+}
+
+a {
+    color: white;
+}

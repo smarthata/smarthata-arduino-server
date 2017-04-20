@@ -1,0 +1,16 @@
+<div ng-controller="WateringController as watering">
+    <fieldset style="border-radius:4px;">
+        <legend>Полив</legend>
+
+        <div ng-repeat="alarm in watering.alarms">
+            <label><input type="checkbox"> {{alarm.time}}</label>
+        </div>
+
+        <a href="#/watering-save" class="button">Сохранить</a>
+
+    </fieldset>
+    <div>
+        <a href="#/" class="button" style="float: right;">Назад</a>
+        <div style="clear: both;"></div>
+    </div>
+</div>

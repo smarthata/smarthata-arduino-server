@@ -1,63 +1,15 @@
 <!doctype html>
-<html lang="en" ng-app="SmartHataApp">
+<html ng-app="project">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=400, user-scalable=yes">
     <title>SmartHata</title>
-    <style>
-        body {
-            background-color: black;
-            color: white;
-            font-family: sans-serif;
-            margin: 50px auto;
-            padding: 20px;
-            width: 333px;
-            border: 1px solid #333333;
-        }
-
-        .tile {
-            display: inline-block;
-            min-width: 100px;
-            min-height: 100px;
-            line-height: 100px;
-            text-align: center;
-            margin: 3px;
-            background-color: #111111;
-            border: 1px solid #333333;
-            border-radius: 4px;
-        }
-
-        a {
-            color: white;
-        }
-    </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-    <script>
-        angular.module('SmartHataApp', [])
-            .controller('DateTimeController', function () {
-                this.data = {
-                    date: "20 Апреля",
-                    time: "20:12",
-                    temperature: "0"
-                };
-            });
-    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.11/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.11/angular-route.min.js"></script>
+    <script src="app.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div ng-controller="DateTimeController as dateTime" style="margin:10px 3px;">
-    <div style="display:inline-block;float:left;font-size:30px;">
-        {{dateTime.data.temperature}} ℃
-    </div>
-    <div style="display:inline;float:right;text-align:right;">
-        <span style="font-size:20px;">{{dateTime.data.time}}</span><br/>
-        <span style="font-size:15px;">{{dateTime.data.date}}</span>
-    </div>
-    <div style="clear: both"></div>
-</div>
-<div>
-    <a href="#lighting" class="tile">Освещение</a>
-    <a href="#warming" class="tile">Отопление</a>
-    <a href="#watering" class="tile">Полив</a>
-</div>
+<div ng-view></div>
 </body>
 </html>
