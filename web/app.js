@@ -19,9 +19,20 @@ angular.module('project', ['ngRoute'])
             dateTime.data = data;
         });
     })
-    .controller('WateringController', function ($http) {
+    .controller('WateringController', function ($http, $location) {
         var watering = this;
         $http.get('/watering-alarms.json').success(function (alarms) {
             watering.alarms = alarms;
         });
+
+        watering.post = function () {
+            $http.post('/watering-alarms.json', watering.alarms, {})
+                .success(function (data, status, headers, config) {
+                    $location.path('/');
+                })
+                .error(function (data, status, header, config) {
+                    console.log('error');
+                    console.log(data);
+                });
+        }
     });

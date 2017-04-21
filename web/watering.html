@@ -6,11 +6,10 @@
             <label><input type="checkbox" ng-model="alarm.enabled"> {{alarm.time}}</label>
         </div>
 
-        <a href="#/watering-save" class="button">Сохранить</a>
+        <button ng-click="watering.post()" class="button">Сохранить</button>
 
-    </fieldset>
-    <div>
         <a href="#/" class="button" style="float: right;">Назад</a>
         <div style="clear: both;"></div>
-    </div>
+
+    </fieldset>
 </div>
