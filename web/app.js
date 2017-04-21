@@ -13,17 +13,15 @@ angular.module('project', ['ngRoute'])
                 });
         }
     )
-    .controller('DateTimeController', function () {
-        this.data = {
-            date: "20 Апреля",
-            time: "20:12",
-            temperature: "0"
-        };
+    .controller('DateTimeController', function ($http) {
+        var dateTime = this;
+        $http.get('/date-time.json').success(function (data) {
+            dateTime.data = data;
+        });
     })
-    .controller('WateringController', function () {
-        this.alarms = [
-            {time: "08:00"},
-            {time: "12:00"},
-            {time: "21:00"}
-        ];
+    .controller('WateringController', function ($http) {
+        var watering = this;
+        $http.get('/watering-alarms.json').success(function (alarms) {
+            watering.alarms = alarms;
+        });
     });

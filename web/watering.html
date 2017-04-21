@@ -2,8 +2,8 @@
     <fieldset style="border-radius:4px;">
         <legend>Полив</legend>
 
-        <div ng-repeat="alarm in watering.alarms">
-            <label><input type="checkbox"> {{alarm.time}}</label>
+        <div ng-repeat="alarm in watering.alarms" style="margin: 10px 0;">
+            <label><input type="checkbox" ng-model="alarm.enabled"> {{alarm.time}}</label>
         </div>
 
         <a href="#/watering-save" class="button">Сохранить</a>
