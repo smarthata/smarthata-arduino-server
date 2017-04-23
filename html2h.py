@@ -104,16 +104,20 @@ if n_pages > 0:
     print >> sys.stderr
     print >> sys.stderr, "Put the following in your sketch:"
     print >> sys.stderr
-    print >> sys.stderr, '#include "html.h"'
+    print >> sys.stderr, '#include "web.h"'
     print >> sys.stderr
+    for n ,ident in enumerate(idents):
+        print >> sys.stderr, "const Page page_%s = {%s_name, %s};" % (ident, ident, ident)
+
+    print >> sys.stderr
+
+    print >> sys.stderr, "const Page* const pages[] = {"
+    # for n in xrange(1, n_pages + 1):
+    #     print >> sys.stderr, "\t&page%02d," % (n - 1)
     for n, ident in enumerate(idents):
-        print >> sys.stderr, "const Page page%02d PROGMEM = {%s_name, %s, NULL};" % (n + 1, ident, ident)
+        print >> sys.stderr, "    &page_%s," % (ident)
 
-    print >> sys.stderr
-
-    print >> sys.stderr, "const Page* const pages[] PROGMEM = {"
-    for n in xrange(1, n_pages + 1):
-        print >> sys.stderr, "\t&page%02d," % n
-
-    print >> sys.stderr, "\tNULL"
+    # print >> sys.stderr, "\tNULL"
     print >> sys.stderr, "};"
+    print >> sys.stderr
+    print >> sys.stderr, "const byte pagesCount = (byte) (sizeof(pages) / sizeof(Page *));"
