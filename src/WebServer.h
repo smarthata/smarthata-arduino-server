@@ -2,9 +2,12 @@
 #define SMARTHATA_WEBSERVER_H
 
 #include <Ethernet.h>
+#include "Page.h"
 
-#define ETH_CS    10
-#define SD_CS     4
+#define ETH_CS      10
+#define SD_CS       4
+#define BUFFER_LEN  1024
+#define MAX_URL_LEN 128
 
 class WebServer {
 public:
@@ -31,8 +34,18 @@ public:
         }
     }
 
+    void readString(Print &p, PGM_P s) {
+        int length = strlen_P(s);
+        for (int i = 0; i < length; ++i) {
+            p.print((char) pgm_read_byte_near(s + i));
+        }
+    }
+
 private:
     EthernetServer server = EthernetServer(80);
+
+    char buffer[BUFFER_LEN];
+    char url[MAX_URL_LEN];
 
     void disableSpiChannel(byte csPin) const {
         pinMode(csPin, OUTPUT);
@@ -41,16 +54,15 @@ private:
 
     void readRequest(EthernetClient &client) {
         int len = 0;
-        char request[1024];
         bool emptyLine = false;
 
         while (client.connected()) {
             if (client.available()) {
                 char c = (char) client.read();
-                request[len++] = c;
+                buffer[len++] = c;
                 if (c == '\n' && emptyLine) {
-                    request[len] = '\0';
-                    Serial.println(request);
+                    buffer[len] = '\0';
+                    Serial.println(buffer);
                     break;
                 }
                 if (c != '\r') {
@@ -58,18 +70,76 @@ private:
                 }
             }
         }
+        parseUrl();
+
     }
 
+    void parseUrl() {
+        url[0] = '\0';
+        char *search;
+        if ((search = strstr(buffer, "GET "))) {
+            char *startUrl = search + 4;
+            strlcpy(url, startUrl, getUrlLength(startUrl));
+        }
+    }
+
+    byte getUrlLength(const char *startUrl) const {
+        char *endUrl;
+        if ((endUrl = strchr(startUrl, ' '))) {
+            unsigned long len = (endUrl - startUrl + 1);
+            return (byte) (len < MAX_URL_LEN ? len : MAX_URL_LEN);
+        }
+        return MAX_URL_LEN;
+    }
 
     void writeResponse(EthernetClient &client) {
-        client.println(F("HTTP/1.1 200 OK"));
-        client.println(F("Content-Type: text/html"));
+        const Page *page = getPage();
+
+        if (page == &page_not_found_html) {
+            client.println(F("HTTP/1.1 404 Not Found"));
+        } else {
+            client.println(F("HTTP/1.1 200 OK"));
+        }
+
+        client.println(F("Connection: close"));
+//        client.print(F("Content-Length: "));
+//        client.println(strlen_P(page->content));
+
+        if (strstr(url, ".html") || !strcmp(url, "/")) {
+            client.println(F("Content-Type: text/html"));
+        } else if (strstr(url, ".json")) {
+            client.println(F("Content-Type: application/json"));
+        } else if (strstr(url, ".js")) {
+            client.println(F("Content-Type: application/javascript"));
+        } else if (strstr(url, ".css")) {
+            client.println(F("Content-Type: text/css"));
+        } else if (strstr(url, ".ico")) {
+            client.println(F("Content-Type: image/x-icon"));
+        } else if (strstr(url, ".txt")) {
+            client.println(F("Content-Type: text/plain"));
+        }
         client.println();
-        client.println(F("<html><body>Hi</body></html>"));
+
+        readString(client, page->content);
 
         client.flush();
-        delay(1);
         client.stop();
+    }
+
+    const Page *getPage() const {
+        int i = 0;
+        while (i < pagesCount) {
+            if (!strcmp_P(url, pages[i]->name)) {
+                return pages[i];
+            }
+            i++;
+        }
+
+        if (!strcmp(url, "/")) {
+            return &page_index_html;
+        }
+
+        return &page_not_found_html;
     }
 };
 
