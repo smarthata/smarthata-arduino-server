@@ -34,10 +34,9 @@ public:
         }
     }
 
-    void readString(Print &p, PGM_P s) {
-        int length = strlen_P(s);
-        for (int i = 0; i < length; ++i) {
-            p.print((char) pgm_read_byte_near(s + i));
+    void readPage(Print &p, const Page *page) {
+        for (unsigned int i = 0; i < page->length; ++i) {
+            p.print((char) pgm_read_byte_near(page->content + i));
         }
     }
 
@@ -101,9 +100,10 @@ private:
             client.println(F("HTTP/1.1 200 OK"));
         }
 
+        client.println(F("Server: Smarthata/1.0.0"));
         client.println(F("Connection: close"));
-//        client.print(F("Content-Length: "));
-//        client.println(strlen_P(page->content));
+        client.print(F("Content-Length: "));
+        client.println(page->length);
 
         if (strstr(url, ".html") || !strcmp(url, "/")) {
             client.println(F("Content-Type: text/html"));
@@ -114,13 +114,13 @@ private:
         } else if (strstr(url, ".css")) {
             client.println(F("Content-Type: text/css"));
         } else if (strstr(url, ".ico")) {
-            client.println(F("Content-Type: image/x-icon"));
+            client.println(F("Content-Type: image/ico"));
         } else if (strstr(url, ".txt")) {
             client.println(F("Content-Type: text/plain"));
         }
         client.println();
 
-        readString(client, page->content);
+        readPage(client, page);
 
         client.flush();
         client.stop();

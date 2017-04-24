@@ -107,7 +107,7 @@ if n_pages > 0:
     print >> sys.stderr, '#include "web.h"'
     print >> sys.stderr
     for n ,ident in enumerate(idents):
-        print >> sys.stderr, "const Page page_%s = {%s_name, %s};" % (ident, ident, ident)
+        print >> sys.stderr, "const Page page_%s = {%s_name, %s, %s_len - 1};" % (ident, ident, ident, ident)
 
     print >> sys.stderr
 
