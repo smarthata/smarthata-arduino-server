@@ -30,11 +30,13 @@ public:
             Serial.println(F("New client"));
             readRequest(client);
             writeResponse(client);
+            client.flush();
+            client.stop();
             Serial.println(F("Client disconnected"));
         }
     }
 
-    void readPage(Print &p, const Page *page) {
+    void readPage(Print &p, const Page *page) const {
         for (unsigned int i = 0; i < page->length; ++i) {
             p.print((char) pgm_read_byte_near(page->content + i));
         }
@@ -70,7 +72,6 @@ private:
             }
         }
         parseUrl();
-
     }
 
     void parseUrl() {
@@ -91,7 +92,7 @@ private:
         return MAX_URL_LEN;
     }
 
-    void writeResponse(EthernetClient &client) {
+    void writeResponse(Print &client) const {
         const Page *page = getPage();
 
         if (page == &page_not_found_html) {
@@ -105,34 +106,40 @@ private:
         client.print(F("Content-Length: "));
         client.println(page->length);
 
-        if (strstr(url, ".html") || !strcmp(url, "/")) {
-            client.println(F("Content-Type: text/html"));
-        } else if (strstr(url, ".json")) {
-            client.println(F("Content-Type: application/json"));
-        } else if (strstr(url, ".js")) {
-            client.println(F("Content-Type: application/javascript"));
-        } else if (strstr(url, ".css")) {
-            client.println(F("Content-Type: text/css"));
-        } else if (strstr(url, ".ico")) {
-            client.println(F("Content-Type: image/ico"));
-        } else if (strstr(url, ".txt")) {
-            client.println(F("Content-Type: text/plain"));
-        }
+        client.print(F("Content-Type: "));
+        client.println(getContentType(page->getName()));
+
         client.println();
 
         readPage(client, page);
+    }
 
-        client.flush();
-        client.stop();
+    const __FlashStringHelper *getContentType(const String pageName) const {
+
+        const String extensions[] = {".html", ".json", ".js", ".css", ".ico"};
+        const __FlashStringHelper *contentTypes[] = {
+                F("text/html"),
+                F("application/json"),
+                F("application/javascript"),
+                F("text/css"),
+                F("image/ico")
+        };
+
+        byte length = sizeof(extensions) / sizeof(String);
+        for (int i = 0; i < length; ++i) {
+            if (pageName.indexOf(extensions[i]) >= 0) {
+                return contentTypes[i];
+            }
+        }
+
+        return F("text/plain");
     }
 
     const Page *getPage() const {
-        int i = 0;
-        while (i < pagesCount) {
+        for (int i = 0; i < pagesCount; ++i) {
             if (!strcmp_P(url, pages[i]->name)) {
                 return pages[i];
             }
-            i++;
         }
 
         if (!strcmp(url, "/")) {

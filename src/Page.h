@@ -7,6 +7,15 @@ struct Page {
     PGM_P name;
     PGM_P content;
     uint16_t length;
+
+    String getName() const {
+        byte len = strlen_P(name);
+        String s = "";
+        for (byte i = 0; i < len; ++i) {
+            s += (char) pgm_read_byte_near(name + i);
+        }
+        return s;
+    }
 };
 
 const Page page_app_js = {app_js_name, app_js, app_js_len - 1};
