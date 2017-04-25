@@ -6,8 +6,6 @@
 
 #define ETH_CS      10
 #define SD_CS       4
-#define BUFFER_LEN  1024
-#define MAX_URL_LEN 128
 
 class WebServer {
 public:
@@ -36,17 +34,11 @@ public:
         }
     }
 
-    void readPage(Print &p, const Page *page) const {
-        for (unsigned int i = 0; i < page->length; ++i) {
-            p.print((char) pgm_read_byte_near(page->content + i));
-        }
-    }
-
 private:
+
     EthernetServer server = EthernetServer(80);
 
-    char buffer[BUFFER_LEN];
-    char url[MAX_URL_LEN];
+    String requestUrl;
 
     void disableSpiChannel(byte csPin) const {
         pinMode(csPin, OUTPUT);
@@ -54,42 +46,34 @@ private:
     }
 
     void readRequest(EthernetClient &client) {
-        int len = 0;
         bool emptyLine = false;
+        String request;
+        requestUrl = "";
 
         while (client.connected()) {
             if (client.available()) {
                 char c = (char) client.read();
-                buffer[len++] = c;
-                if (c == '\n' && emptyLine) {
-                    buffer[len] = '\0';
-                    Serial.println(buffer);
-                    break;
+                request += c;
+                if (c == '\n') {
+                    parseRequest(request);
+                    request = "";
+                    if (emptyLine) break;
                 }
                 if (c != '\r') {
                     emptyLine = c == '\n';
                 }
             }
         }
-        parseUrl();
     }
 
-    void parseUrl() {
-        url[0] = '\0';
-        char *search;
-        if ((search = strstr(buffer, "GET "))) {
-            char *startUrl = search + 4;
-            strlcpy(url, startUrl, getUrlLength(startUrl));
+    void parseRequest(String &request) {
+        Serial.print(request);
+        int indexGet = request.indexOf("GET ");
+        if (indexGet >= 0) {
+            int urlEnd = request.indexOf(' ', (unsigned int) (indexGet + 4));
+            urlEnd = urlEnd < 0 ? request.length() : (unsigned int) urlEnd;
+            requestUrl = request.substring((unsigned int) (indexGet + 4), urlEnd);
         }
-    }
-
-    byte getUrlLength(const char *startUrl) const {
-        char *endUrl;
-        if ((endUrl = strchr(startUrl, ' '))) {
-            unsigned long len = (endUrl - startUrl + 1);
-            return (byte) (len < MAX_URL_LEN ? len : MAX_URL_LEN);
-        }
-        return MAX_URL_LEN;
     }
 
     void writeResponse(Print &client) const {
@@ -137,16 +121,22 @@ private:
 
     const Page *getPage() const {
         for (int i = 0; i < pagesCount; ++i) {
-            if (!strcmp_P(url, pages[i]->name)) {
+            if (!strcmp_P(requestUrl.c_str(), pages[i]->name)) {
                 return pages[i];
             }
         }
 
-        if (!strcmp(url, "/")) {
+        if (requestUrl.equals("/")) {
             return &page_index_html;
         }
 
         return &page_not_found_html;
+    }
+
+    void readPage(Print &p, const Page *page) const {
+        for (unsigned int i = 0; i < page->length; ++i) {
+            p.print((char) pgm_read_byte_near(page->content + i));
+        }
     }
 };
 
