@@ -3,19 +3,20 @@
 
 #include "web.h"
 
-struct Page {
-    PGM_P name;
+class Page {
+public:
+    Page(PGM_P name, PGM_P content, unsigned int length) :
+            name(String((__FlashStringHelper *) name)), content(content), length(length) {};
+
     PGM_P content;
-    uint16_t length;
+    const uint16_t length;
 
     String getName() const {
-        byte len = strlen_P(name);
-        String s = "";
-        for (byte i = 0; i < len; ++i) {
-            s += (char) pgm_read_byte_near(name + i);
-        }
-        return s;
+        return name;
     }
+
+private:
+    String name;
 };
 
 const Page page_app_js = {app_js_name, app_js, app_js_len - 1};

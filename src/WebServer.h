@@ -72,7 +72,7 @@ private:
         if (indexGet >= 0) {
             int urlEnd = request.indexOf(' ', (unsigned int) (indexGet + 4));
             urlEnd = urlEnd < 0 ? request.length() : (unsigned int) urlEnd;
-            requestUrl = request.substring((unsigned int) (indexGet + 4), urlEnd);
+            requestUrl = request.substring((unsigned int) (indexGet + 4), (unsigned int) urlEnd);
         }
     }
 
@@ -98,7 +98,7 @@ private:
         readPage(client, page);
     }
 
-    const __FlashStringHelper *getContentType(const String pageName) const {
+    const String getContentType(const String pageName) const {
 
         const String extensions[] = {".html", ".json", ".js", ".css", ".ico"};
         const __FlashStringHelper *contentTypes[] = {
@@ -121,7 +121,7 @@ private:
 
     const Page *getPage() const {
         for (int i = 0; i < pagesCount; ++i) {
-            if (!strcmp_P(requestUrl.c_str(), pages[i]->name)) {
+            if (requestUrl.equals(pages[i]->getName())) {
                 return pages[i];
             }
         }
