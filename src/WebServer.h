@@ -88,14 +88,14 @@ private:
         client.println(F("Server: Smarthata/1.0.0"));
         client.println(F("Connection: close"));
         client.print(F("Content-Length: "));
-        client.println(page->length);
+        client.println(page->getLength());
 
         client.print(F("Content-Type: "));
         client.println(getContentType(page->getName()));
 
         client.println();
 
-        readPage(client, page);
+        page->write(client);
     }
 
     const String getContentType(const String pageName) const {
@@ -133,11 +133,6 @@ private:
         return &page_not_found_html;
     }
 
-    void readPage(Print &p, const Page *page) const {
-        for (unsigned int i = 0; i < page->length; ++i) {
-            p.print((char) pgm_read_byte_near(page->content + i));
-        }
-    }
 };
 
 #endif

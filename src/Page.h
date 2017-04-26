@@ -9,14 +9,24 @@ public:
             name(String((__FlashStringHelper *) name)), content(content), length(length) {};
 
     PGM_P content;
-    const uint16_t length;
+
+    void write(Print &p) const {
+        for (unsigned int i = 0; i < length; ++i) {
+            p.print((char) pgm_read_byte_near(content + i));
+        }
+    }
 
     String getName() const {
         return name;
     }
 
+    const uint16_t getLength() const {
+        return length;
+    }
+
 private:
     String name;
+    const uint16_t length;
 };
 
 const Page page_app_js = {app_js_name, app_js, app_js_len - 1};
