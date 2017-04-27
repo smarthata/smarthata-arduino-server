@@ -2,7 +2,7 @@
 #define SMARTHATA_WEBSERVER_H
 
 #include <Ethernet.h>
-#include "Page.h"
+#include "PagesHolder.h"
 
 #define ETH_CS      10
 #define SD_CS       4
@@ -37,6 +37,8 @@ public:
 private:
 
     EthernetServer server = EthernetServer(80);
+
+    PagesHolder pagesHolder;
 
     String requestUrl;
 
@@ -77,7 +79,8 @@ private:
     }
 
     void writeResponse(Print &client) const {
-        const Page *page = getPage();
+        Pageable *page = pagesHolder.getPage(requestUrl);
+        page->process();
 
         if (page == &page_not_found_html) {
             client.println(F("HTTP/1.1 404 Not Found"));
@@ -117,20 +120,6 @@ private:
         }
 
         return F("text/plain");
-    }
-
-    const Page *getPage() const {
-        for (int i = 0; i < pagesCount; ++i) {
-            if (requestUrl.equals(pages[i]->getName())) {
-                return pages[i];
-            }
-        }
-
-        if (requestUrl.equals("/")) {
-            return &page_index_html;
-        }
-
-        return &page_not_found_html;
     }
 
 };
