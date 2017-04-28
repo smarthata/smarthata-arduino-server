@@ -5,3 +5,5 @@ CMakeListsPrivate.txt
 .idea
 CMakeLists.txt
 cmake-build-debug
+src/web.h
+web-out
