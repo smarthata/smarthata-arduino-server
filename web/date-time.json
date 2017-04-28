@@ -1,5 +1,6 @@
 {
   "date": "20 Апреля",
   "time": "20:12",
-  "temperature": "0"
+  "temperature": 0,
+  "memory": 128
 }
